@@ -105,7 +105,7 @@ public class CardDeliveryTest {
         $("[data-test-id='date'] input").sendKeys(Keys.chord(Keys.SHIFT, Keys.UP), Keys.DELETE);
         $("[data-test-id='date'] input").setValue(formattedDate10);
         $("[data-test-id='name'] input").setValue("123456");
-        $("[data-test-id='phone'] input").setValue("+79012345678");
+        $("[data-test-id='phone'] input").setValue("+79012345675");
         $("[data-test-id='agreement']").click();
         $("[class='button__content']").click();
         $("[data-test-id='name'].input_invalid .input__sub").shouldHave(Condition.text("Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы."));
