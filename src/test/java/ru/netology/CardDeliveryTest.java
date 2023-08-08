@@ -123,7 +123,7 @@ public class CardDeliveryTest {
         SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
         String formattedDate10 = formatter.format(date10);
 
-        $("[data-test-id='city'] input").setValue("Москва");
+        $("[data-test-id='city'] input").setValue("Майкоп");
         $("[data-test-id='date'] input").sendKeys(Keys.chord(Keys.SHIFT, Keys.UP), Keys.DELETE);
         $("[data-test-id='date'] input").setValue(formattedDate10);
         $("[data-test-id='name'] input").setValue("^&%");
