@@ -68,7 +68,7 @@ public class CardDeliveryTest {
     }
 
      @Test
-    void ShouldNotDeliverIfNameIsEnglish() {
+    void ShouldNotDeliverIfNameIsNotRussian() {
 
         Calendar.getInstance();
         Date currentDate = new Date();
