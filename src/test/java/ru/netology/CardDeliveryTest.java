@@ -1,20 +1,28 @@
 package ru.netology;
 
 import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.ElementsCollection;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Keys;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import static com.codeborne.selenide.Condition.exactText;
+import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.Selenide.$;
 
 public class CardDeliveryTest {
 
+    public String generateDate(long addDays, String pattern) {
+        return LocalDate.now().plusDays(addDays).format(DateTimeFormatter.ofPattern(pattern));
+    }
+
+    String planningDate = generateDate(10, "dd.MM.yyyy");
 
     @BeforeEach
     void openBrowser() {
@@ -23,43 +31,25 @@ public class CardDeliveryTest {
 
     // Part #1
     @Test
-    void ShouldDeliverCardByKeyboard() throws InterruptedException {
-
-        Calendar.getInstance();
-        Date currentDate = new Date();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(currentDate);
-        calendar.add(Calendar.DATE, 10);
-        Date date10 = calendar.getTime();
-        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
-        String formattedDate10 = formatter.format(date10);
+    void shouldDeliverCardByKeyboard() {
 
         $("[data-test-id='city'] input").setValue("Майкоп");
         $("[data-test-id='date'] input").sendKeys(Keys.chord(Keys.SHIFT, Keys.UP), Keys.DELETE);
-        $("[data-test-id='date'] input").setValue(formattedDate10);
+        $("[data-test-id='date'] input").setValue(planningDate);
         $("[data-test-id='name'] input").setValue("Васильков Василий");
         $("[data-test-id='phone'] input").setValue("+79012345678");
         $("[data-test-id='agreement']").click();
         $("[class='button__content']").click();
-        Thread.sleep(15000);
-        $("[data-test-id='notification']").shouldHave(Condition.text("Успешно!"));
+        $(".notification__title").shouldHave(Condition.text("Успешно!"), Duration.ofSeconds(15)).shouldBe(visible);
+        $(".notification__content").shouldHave(Condition.text("Встреча успешно забронирована на " + planningDate), Duration.ofSeconds(15)).shouldBe(visible);
     }
 
     @Test
-    void ShouldNotDeliverIfCityIsNotInList() {
-
-        Calendar.getInstance();
-        Date currentDate = new Date();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(currentDate);
-        calendar.add(Calendar.DATE, 10);
-        Date date10 = calendar.getTime();
-        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
-        String formattedDate10 = formatter.format(date10);
+    void shouldNotDeliverIfCityIsNotInList() {
 
         $("[data-test-id='city'] input").setValue("Лондон");
         $("[data-test-id='date'] input").sendKeys(Keys.chord(Keys.SHIFT, Keys.UP), Keys.DELETE);
-        $("[data-test-id='date'] input").setValue(formattedDate10);
+        $("[data-test-id='date'] input").setValue(planningDate);
         $("[data-test-id='name'] input").setValue("Васильков Василий");
         $("[data-test-id='phone'] input").setValue("+79012345678");
         $("[data-test-id='agreement']").click();
@@ -67,21 +57,12 @@ public class CardDeliveryTest {
         $("[data-test-id='city'].input_invalid .input__sub").shouldHave(Condition.text("Доставка в выбранный город недоступна"));
     }
 
-     @Test
-    void ShouldNotDeliverIfNameIsNotRussian() {
-
-        Calendar.getInstance();
-        Date currentDate = new Date();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(currentDate);
-        calendar.add(Calendar.DATE, 10);
-        Date date10 = calendar.getTime();
-        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
-        String formattedDate10 = formatter.format(date10);
+    @Test
+    void shouldNotDeliverIfNameIsNotRussian() {
 
         $("[data-test-id='city'] input").setValue("Москва");
         $("[data-test-id='date'] input").sendKeys(Keys.chord(Keys.SHIFT, Keys.UP), Keys.DELETE);
-        $("[data-test-id='date'] input").setValue(formattedDate10);
+        $("[data-test-id='date'] input").setValue(planningDate);
         $("[data-test-id='name'] input").setValue("Ann");
         $("[data-test-id='phone'] input").setValue("+79012345678");
         $("[data-test-id='agreement']").click();
@@ -90,20 +71,11 @@ public class CardDeliveryTest {
     }
 
     @Test
-    void ShouldNotDeliverIfNameIsNumber() {
-
-        Calendar.getInstance();
-        Date currentDate = new Date();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(currentDate);
-        calendar.add(Calendar.DATE, 10);
-        Date date10 = calendar.getTime();
-        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
-        String formattedDate10 = formatter.format(date10);
+    void shouldNotDeliverIfNameIsNumber() {
 
         $("[data-test-id='city'] input").setValue("Москва");
         $("[data-test-id='date'] input").sendKeys(Keys.chord(Keys.SHIFT, Keys.UP), Keys.DELETE);
-        $("[data-test-id='date'] input").setValue(formattedDate10);
+        $("[data-test-id='date'] input").setValue(planningDate);
         $("[data-test-id='name'] input").setValue("123456");
         $("[data-test-id='phone'] input").setValue("+79012345678");
         $("[data-test-id='agreement']").click();
@@ -112,20 +84,11 @@ public class CardDeliveryTest {
     }
 
     @Test
-    void ShouldNotDeliverIfNameIsSymbols() {
-
-        Calendar.getInstance();
-        Date currentDate = new Date();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(currentDate);
-        calendar.add(Calendar.DATE, 10);
-        Date date10 = calendar.getTime();
-        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
-        String formattedDate10 = formatter.format(date10);
+    void shouldNotDeliverIfNameIsSymbols() {
 
         $("[data-test-id='city'] input").setValue("Майкоп");
         $("[data-test-id='date'] input").sendKeys(Keys.chord(Keys.SHIFT, Keys.UP), Keys.DELETE);
-        $("[data-test-id='date'] input").setValue(formattedDate10);
+        $("[data-test-id='date'] input").setValue(planningDate);
         $("[data-test-id='name'] input").setValue("^&%");
         $("[data-test-id='phone'] input").setValue("+79012345678");
         $("[data-test-id='agreement']").click();
@@ -134,20 +97,12 @@ public class CardDeliveryTest {
     }
 
     @Test
-    void ShouldNotDeliverIfDateIsEarly() {
+    void shouldNotDeliverIfDateIsEarly() {
 
-        Calendar.getInstance();
-        Date currentDate = new Date();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(currentDate);
-        calendar.add(Calendar.DATE, -5);
-        Date dateNegative = calendar.getTime();
-        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
-        String formattedDated = formatter.format(dateNegative);
-
+        String planningDate = generateDate(2, "dd.MM.yyyy");
         $("[data-test-id='city'] input").setValue("Москва");
         $("[data-test-id='date'] input").sendKeys(Keys.chord(Keys.SHIFT, Keys.UP), Keys.DELETE);
-        $("[data-test-id='date'] input").setValue(formattedDated);
+        $("[data-test-id='date'] input").setValue(planningDate);
         $("[data-test-id='name'] input").setValue("Васильков Василий");
         $("[data-test-id='phone'] input").setValue("+71234567890");
         $("[data-test-id='agreement']").click();
@@ -157,24 +112,60 @@ public class CardDeliveryTest {
 
     // Part #2
     @Test
-    void ShouldDeliverCardByLists() throws InterruptedException {
+    void shouldDeliverCardByListsForSevenDays() {
 
-        Calendar.getInstance();
-        Date currentDate = new Date();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(currentDate);
-        calendar.add(Calendar.DATE, 7);
-        Date date7 = calendar.getTime();
-        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
-        String formattedDate7 = formatter.format(date7);
+        long addDays = 7;
+        String planningDay = generateDate(addDays, "dd");
+        String planningMonth = generateDate(addDays, "MM");
+        String planningDate = generateDate(addDays, "dd.MM.yyyy");
+
         $("[data-test-id='city'] input").setValue("Ма");
         $$(".menu .menu-item__control").find(exactText("Майкоп")).click();
-        $("[data-test-id='date'] input").doubleClick().sendKeys(formattedDate7);
+        $(".icon").click();
+
+        while (addDays > 30) {
+            if (!planningMonth.equals(generateDate(0, "MM"))) {
+                ElementsCollection arrow = $$(".calendar__arrow_direction_right");
+                $(arrow.get(1)).click();
+                addDays = addDays - 30;
+            }
+        }
+
+        $$(".calendar__day").find(exactText(planningDay.replaceFirst("^0+(?!$)", ""))).click();
         $("[data-test-id='name'] input").setValue("Васильков Василий");
         $("[data-test-id='phone'] input").setValue("+79012345678");
         $("[data-test-id='agreement']").click();
         $("[class='button__content']").click();
-        Thread.sleep(15000);
-        $("[data-test-id='notification']").shouldHave(Condition.text("Успешно!"));
+        $("[data-test-id=notification].notification_visible .notification__title").shouldBe(visible, Duration.ofSeconds(15)).shouldHave(exactText("Успешно!"));
+        $("[data-test-id=notification].notification_visible .notification__content").shouldBe(visible).shouldHave(exactText("Встреча успешно забронирована на " + planningDate));
+    }
+
+    @Test
+    void shouldDeliverCardByListsForALongTime() {
+        long addDays = 153;
+        String planningDay = generateDate(addDays, "dd");
+        String planningMonth = generateDate(addDays, "MM");
+        String planningDate = generateDate(addDays, "dd.MM.yyyy");
+
+        $("[data-test-id='city'] input").setValue("Ма");
+        $$(".menu .menu-item__control").find(exactText("Майкоп")).click();
+        $(".icon").click();
+        while (addDays > 30) {
+            if (!planningMonth.equals(generateDate(0, "MM"))) {
+                ElementsCollection arrow = $$(".calendar__arrow_direction_right");
+                $(arrow.get(1)).click();
+                addDays = addDays - 30;
+            }
+        }
+
+        $$(".calendar__day").find(exactText(planningDay.replaceFirst("^0+(?!$)", ""))).click();
+        $("[data-test-id='name'] input").setValue("Васильков Василий");
+        $("[data-test-id='phone'] input").setValue("+79012345678");
+        $("[data-test-id='agreement']").click();
+        $("[class='button__content']").click();
+        $("[data-test-id=notification].notification_visible .notification__title").shouldBe(visible, Duration.ofSeconds(15)).shouldHave(exactText("Успешно!"));
+        $("[data-test-id=notification].notification_visible .notification__content").shouldBe(visible).shouldHave(exactText("Встреча успешно забронирована на " + planningDate));
     }
 }
+
+
