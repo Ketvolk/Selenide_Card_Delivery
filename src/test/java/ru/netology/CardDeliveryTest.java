@@ -115,23 +115,24 @@ public class CardDeliveryTest {
     void shouldDeliverCardByListsForSevenDays() {
 
         long addDays = 7;
-        String planningDay = generateDate(addDays, "dd");
-        String planningMonth = generateDate(addDays, "MM");
+        String planningDay = generateDate(addDays, "d");
         String planningDate = generateDate(addDays, "dd.MM.yyyy");
 
         $("[data-test-id='city'] input").setValue("Ма");
         $$(".menu .menu-item__control").find(exactText("Майкоп")).click();
         $(".icon").click();
 
-        while (addDays > 30) {
-            if (!planningMonth.equals(generateDate(0, "MM"))) {
-                ElementsCollection arrow = $$(".calendar__arrow_direction_right");
-                $(arrow.get(1)).click();
-                addDays = addDays - 30;
-            }
-        }
+        LocalDate planningDateL = LocalDate.now().plusDays(addDays);
+        LocalDate defaultDate = LocalDate.now().plusDays(3);
 
-        $$(".calendar__day").find(exactText(planningDay.replaceFirst("^0+(?!$)", ""))).click();
+        ElementsCollection arrow = $$(".calendar__arrow_direction_right");
+        int monthDiff = (planningDateL.getYear() - defaultDate.getYear()) * 12 + (planningDateL.getMonthValue() - defaultDate.getMonthValue());
+        while (monthDiff > 0) {
+            $(arrow.get(1)).click();
+            monthDiff = monthDiff-1;
+        }
+        $$(".calendar__day").find(exactText(planningDay)).click();
+
         $("[data-test-id='name'] input").setValue("Васильков Василий");
         $("[data-test-id='phone'] input").setValue("+79012345678");
         $("[data-test-id='agreement']").click();
@@ -143,22 +144,24 @@ public class CardDeliveryTest {
     @Test
     void shouldDeliverCardByListsForALongTime() {
         long addDays = 153;
-        String planningDay = generateDate(addDays, "dd");
-        String planningMonth = generateDate(addDays, "MM");
+        String planningDay = generateDate(addDays, "d");
         String planningDate = generateDate(addDays, "dd.MM.yyyy");
 
         $("[data-test-id='city'] input").setValue("Ма");
         $$(".menu .menu-item__control").find(exactText("Майкоп")).click();
         $(".icon").click();
-        while (addDays > 30) {
-            if (!planningMonth.equals(generateDate(0, "MM"))) {
-                ElementsCollection arrow = $$(".calendar__arrow_direction_right");
-                $(arrow.get(1)).click();
-                addDays = addDays - 30;
-            }
-        }
 
-        $$(".calendar__day").find(exactText(planningDay.replaceFirst("^0+(?!$)", ""))).click();
+        LocalDate planningDateL = LocalDate.now().plusDays(addDays);
+        LocalDate defaultDate = LocalDate.now().plusDays(3);
+        int monthDiff = (planningDateL.getYear() - defaultDate.getYear()) * 12 + (planningDateL.getMonthValue() - defaultDate.getMonthValue());
+
+        ElementsCollection arrow = $$(".calendar__arrow_direction_right");
+        while (monthDiff > 0) {
+            $(arrow.get(1)).click();
+            monthDiff = monthDiff - 1;
+        }
+        $$(".calendar__day").find(exactText(planningDay)).click();
+
         $("[data-test-id='name'] input").setValue("Васильков Василий");
         $("[data-test-id='phone'] input").setValue("+79012345678");
         $("[data-test-id='agreement']").click();
